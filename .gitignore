@@ -1,0 +1,12 @@
+# IDE
+.idea/
+__pycache__/
+
+# Logs
+*.log
+
+# Service
+*.txt
+
+# Sensible data
+.env
