@@ -11,3 +11,6 @@ upload_files_to_server.*
 
 # Sensible data
 .env
+
+# Testing
+*test*

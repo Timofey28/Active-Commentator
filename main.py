@@ -1,4 +1,5 @@
 import logging
+import os
 from logging.handlers import RotatingFileHandler
 
 import vk_api
@@ -22,6 +23,10 @@ def get_last_post_info() -> dict:
 
 
 def post_is_new(post_info: dict) -> bool:
+    if not os.path.exists(settings.last_post_id_file):
+        with open(settings.last_post_id_file, "w") as file:
+            file.write(str(post_info["id"]))
+        return False
     with open(settings.last_post_id_file) as file:
         last_post_id = int(file.read())
     if last_post_id == post_info["id"]:
@@ -43,7 +48,7 @@ def generate_comment(post_text: str) -> str:
     response = openai.chat.completions.create(
         model="gpt-4o",
         temperature=1.0,
-        top_p=1.0,
+        top_p=0.9,
         messages=[
             {"role": "system", "content": "You are a helpful assistant which generates positive and meaningful comments to posts in social network."},
             {"role": "user", "content": prompt}
@@ -66,6 +71,7 @@ def check_for_new_posts():
 
 
 if __name__ == '__main__':
+    open('info.log', 'w').close()
     handler = RotatingFileHandler(
         filename='info.log',
         mode='w',
@@ -85,6 +91,6 @@ if __name__ == '__main__':
     openai = OpenAI(api_key=settings.openai_api_key)
 
     scheduler = BlockingScheduler()
-    scheduler.add_job(check_for_new_posts, 'interval', minutes=1)
+    scheduler.add_job(check_for_new_posts, 'interval', seconds=60)
     print('Running...')
     scheduler.start()

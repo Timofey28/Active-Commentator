@@ -19,9 +19,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-if not os.path.exists(settings.last_post_id_file):
-    with open(settings.last_post_id_file, "w") as file:
-        file.write("0")
-if os.path.exists('info.log'):
-    open('info.log', 'w').close()
